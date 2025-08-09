@@ -1,0 +1,6 @@
+@interrapidisimoBack_HostAddress = http://localhost:5122
+
+GET {{interrapidisimoBack_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
