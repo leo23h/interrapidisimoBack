@@ -42,8 +42,7 @@ public class MateriaRepository : IMateriaRepository
         var query = await _context.MateriaEstudiantes.FirstOrDefaultAsync(p => p.EstudianteId == body.IdEstudiante && p.MateriaId == body.IdMateria);
         if (query != null)
         {
-            query.Activo = false;
-            _context.MateriaEstudiantes.Update(query!);
+            _context.MateriaEstudiantes.Remove(query!);
         }
         else
         {
@@ -60,7 +59,7 @@ public class MateriaRepository : IMateriaRepository
 
     public async Task<List<MateriaDto>> GetMateriasPorEstudianteAsync(int idEstudiante)
     {
-        var materias = await (from materiaEstudiante in _context.MateriaEstudiantes
+        List<MateriaDto> materias = await (from materiaEstudiante in _context.MateriaEstudiantes
                               join materia in _context.Materia
                               on materiaEstudiante.MateriaId equals materia.Id
                               join profesor in _context.Profesors
@@ -80,6 +79,11 @@ public class MateriaRepository : IMateriaRepository
                                         Email = profesor.Email
                                     }
                               }).ToListAsync();
+                              
+        if (materias == null || materias.Count == 0)
+        {
+            materias = new List<MateriaDto>();
+        }
 
         return materias;
     }

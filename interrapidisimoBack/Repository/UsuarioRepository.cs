@@ -20,13 +20,14 @@ public class UsuarioRepository : IUsuarioRepository
             .Select(u => new UsuarioDto
             {
                 Id = u.Id,
-                Email = u.Email
+                Email = u.Email,
+                Password = u.Password,
             })
             .FirstOrDefaultAsync();
 
         if (usuario == null)
         {
-            throw new InvalidOperationException($"Usuario with email {email} not found.");
+            throw new Exception($"Usuario con email {email} no se encuentra.");
         }
 
         return usuario;

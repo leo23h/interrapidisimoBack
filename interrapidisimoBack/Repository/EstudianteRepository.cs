@@ -20,7 +20,7 @@ public class EstudianteRepository : IEstudianteRepository
 
         if (estudiante == null)
         {
-            throw new InvalidOperationException($"estudiante with ID {estudiante} not found.");
+            throw new Exception($"estudiante with ID {estudiante} not found.");
         }
 
         return estudiante;
@@ -47,7 +47,7 @@ public class EstudianteRepository : IEstudianteRepository
 
         if (estudiantes == null || !estudiantes.Any())
         {
-            throw new InvalidOperationException($"No se registran estudiantes en la base de datos.");
+            throw new Exception($"No se registran estudiantes en la base de datos.");
         }
 
         return estudiantes;
@@ -55,11 +55,15 @@ public class EstudianteRepository : IEstudianteRepository
 
     private async Task<List<Materium>> GetMateriasPorEstudiante(int idEstudiante)
     {
-        var materias = await (from materiaEstudiante in _context.MateriaEstudiantes
+        List<Materium> materias = await (from materiaEstudiante in _context.MateriaEstudiantes
                               join materia in _context.Materia
                               on materiaEstudiante.MateriaId equals materia.Id
-                              where materiaEstudiante.EstudianteId == idEstudiante
+                              where materiaEstudiante.EstudianteId == idEstudiante && materiaEstudiante.Activo == true
                               select materia).ToListAsync();
+        if (materias.Count == 0)
+        {
+            materias = new List<Materium>();
+        }
 
         return materias;
     }

@@ -27,6 +27,11 @@ public class ProfesorRepository : IProfesorRepository
 
                        }).ToListAsync();
 
+        if (query == null || !query.Any())
+        {
+            throw new Exception($"No se registran profesores en la base de datos.");
+        }
+
          return query;
     }
 }

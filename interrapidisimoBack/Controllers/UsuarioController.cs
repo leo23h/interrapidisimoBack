@@ -19,19 +19,27 @@ namespace interrapidisimoBack.Controllers
         [HttpPost("GetUsuarioByEmail")]
         public async Task<ActionResult<UsuarioDto>> GetUsuarioByEmail([FromBody] UsuarioRequestDto request)
         {
-            if (!string.IsNullOrEmpty(request.Email))
+            try
             {
-                var resp = await _usuarioService.GetUsuarioByEmailAsync(request.Email);
-                if (resp == null)
+                if (!string.IsNullOrEmpty(request.Email))
                 {
-                    return NotFound();
+                    var resp = await _usuarioService.GetUsuarioByEmailAsync(request.Email);
+                    if (resp == null)
+                    {
+                        return NotFound();
+                    }
+                    return StatusCode(200, new { resp });
                 }
-                return Ok(resp);
+                else
+                {
+                    return StatusCode(400, new { mensaje = "El email no puede ser un campo vacio" });
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("El email no puede ser un campo vacio");
+                return StatusCode(500, new { mensaje = "Error interno del servidor", error = ex.Message });
             }
+
         }
 
         [HttpPost("RegistrarUsuario")]
@@ -42,14 +50,14 @@ namespace interrapidisimoBack.Controllers
                 var resp = await _usuarioService.RegisterUsuarioAsync(request);
                 if (resp == null)
                 {
-                    return NotFound();
+                    return StatusCode(400, new { mensaje = "error al registrar usuario" });
                 }
-                return Ok(resp);
+                return StatusCode(200, new { resp });
             }
             else
             {
-                return BadRequest("El email no puede ser un campo vacio");
+                return StatusCode(400, new { mensaje = "body no puede estar vacio" });
             }
         }
-	}
+    }
 }
